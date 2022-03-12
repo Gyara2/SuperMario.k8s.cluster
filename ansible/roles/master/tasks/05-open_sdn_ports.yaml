@@ -1,0 +1,36 @@
+---
+
+- name: Open necessary SDN ports
+  become: yes
+  register: output
+  firewalld:
+    permanent: yes
+    port: "{{ item[1] }}/udp"
+    immediate: yes
+    state: enabled
+  delegate_to: "{{ item[0] }}"
+  with_nested:
+    - "{{ groups['cluster']  }}"
+    - "{{ sdn_ports }}"
+
+
+- name: Check Output
+  debug:
+    msg: 
+      - "Port: {{ item[1]['invocation']['module_args'].port }}"
+      - "State: {{ item[1]['invocation']['module_args'].state }}"
+  loop_control:
+    label: "{{ item[1]['invocation']['module_args'].port }}"
+  delegate_to: "{{ item[0] }}"
+  with_nested:
+    - "{{ groups['cluster']  }}"
+    - "{{ output.results }}"
+    
+- name: Reload firewall service
+  become: yes
+  service:
+    name: firewalld
+    state: reloaded
+  delegate_to: "{{ item }}"
+  with_items:
+    - "{{ groups['cluster'] }}"

@@ -1,0 +1,9 @@
+---
+
+- name: Configure workers nodes
+  hosts: workers
+  vars_files:
+    - "group_vars/workers_vars.yaml"
+  gather_facts: true
+  roles:
+    - workers

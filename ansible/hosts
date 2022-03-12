@@ -1,0 +1,13 @@
+[all:vars]
+ansible_user=adminUsername
+
+[master]
+master.azure ansible_host=20.126.75.159 internal_ip=10.0.1.10
+
+[workers]
+worker01.azure ansible_host=20.126.136.78 internal_ip=10.0.1.11
+worker02.azure ansible_host=20.126.8.84 internal_ip=10.0.1.12
+
+[cluster:children]
+master
+workers

@@ -1,0 +1,106 @@
+---
+
+- name: Check if required kube packages are already installed
+  become: yes
+  register: installed_output
+  command: rpm -q {{ item }}
+  with_items:
+    - "{{ packages }}"
+  ignore_errors: true
+
+- name: Check packages
+  debug:
+    msg: "{{ item.stdout_lines }}"
+  when: item.rc == 0
+  loop: "{{ installed_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+  # https://github.com/ansible/ansible/issues/33187 - 'Already downloaded', finally is required
+  # Ansible v2.12 > required
+- name: Install necessary kubernetes packages
+  become: yes
+  register: output
+  dnf:
+    cacheonly: no
+    name: "{{ packages }}"
+    state: latest
+    disable_excludes: kubernetes
+  when: item.rc == 1
+  loop: "{{ installed_output.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  ignore_errors: true
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_module.html#examples
+- name: Enable/Start kubelet service
+  become: yes
+  service:
+    enabled: yes
+    state: started
+    name: kubelet
+
+- name: Collect system services facts
+  become: yes
+  service_facts:
+  register: output
+
+- name: Check kubelet service status
+  become: yes
+  debug: 
+    msg: 
+      - "Service name: {{ output.ansible_facts.services['kubelet.service'].name}}"
+      - "Current state: {{ output.ansible_facts.services['kubelet.service'].state}}"
+      - "Status: {{ output.ansible_facts.services['kubelet.service'].status}}"
+  # failed_when: ('kubelet.service' not in output.ansible_facts.services) or (output.ansible_facts.services['kubelet.service'].state != 'running')
+
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/stat_module.html
+- name: Check config.yaml status
+  become: yes
+  register: stat_result
+  stat:
+      path: /var/lib/kubelet/config.yaml
+    
+# # https://github.com/kubernetes/kubernetes/issues/66108
+# - name: Init Kube and create config.yaml file {{ groups['master'] }}
+#   become: yes
+#   shell: kubeadm init --pod-network-cidr {{ pods_net }}
+#   when: inventory_hostname == item
+#   with_items:
+#     - "{{ groups['master'] }}"
+#   ignore_errors: true
+
+#   # https://github.com/kubernetes/kubernetes/issues/66108
+#   # https://stackoverflow.com/questions/60297810/kubelet-config-yaml-is-missing-when-restart-work-node-docker-service
+#   # https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init-phase/
+#   # https://github.com/kubernetes/kubeadm/issues/700
+# - name: Init phase kubelet to create config.yaml file {{ groups['workers'] }}
+#   become: yes
+#   shell: kubeadm init --ignore-preflight-errors=all 
+#   when: inventory_hostname == item
+#   with_items:
+#     - "{{ groups['workers'] }}"
+#   ignore_errors: true
+
+# # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_module.html#examples
+# - name: Enable/Start kubelet service
+#   become: yes
+#   service:
+#     enabled: yes
+#     state: started
+#     name: kubelet
+
+# - name: Collect system services facts
+#   become: yes
+#   service_facts:
+#   register: output
+
+# - name: Check kubelet service status
+#   become: yes
+#   debug: 
+#     msg: 
+#       - "Service name: {{ output.ansible_facts.services['kubelet.service'].name}}"
+#       - "Current state: {{ output.ansible_facts.services['kubelet.service'].state}}"
+#       - "Status: {{ output.ansible_facts.services['kubelet.service'].status}}"
+#   failed_when: ('kubelet.service' not in output.ansible_facts.services) or (output.ansible_facts.services['kubelet.service'].state != 'running')
+    

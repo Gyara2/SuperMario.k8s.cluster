@@ -1,0 +1,10 @@
+---
+
+- name: Configure kubeadm
+  become: yes
+  register: output
+  shell: kubeadm config images pull
+
+- name: Check Output
+  debug:
+    msg:  "{{ output.stdout_lines }}"

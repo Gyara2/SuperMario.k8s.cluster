@@ -1,0 +1,4 @@
+---
+
+- include_tasks: 01-open_kube_ports.yaml
+- include_tasks: 02-join_master_node.yaml

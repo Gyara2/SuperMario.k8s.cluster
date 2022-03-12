@@ -1,0 +1,59 @@
+
+---
+
+- name: Wait for port 6443 to become open on the host
+  wait_for:
+    port: 6443
+    delay: 10
+
+- name: Check if haproxy is already running
+  become: yes
+  register: namespaces
+  shell: kubectl get namespaces -o custom-columns=NAME:.metadata.name
+
+- name: Install ingress controller
+  become: yes
+  register: output_ingress
+  shell: kubectl apply -f "{{ haproxy_url }}"
+  when: "'haproxy-controller' not in namespaces"
+
+- name: Check Output
+  debug:
+    msg: "{{ output_ingress.stdout_lines }}"
+  when: "'haproxy-controller' not in namespaces"
+
+- name: Create namespace
+  become: yes
+  register: output_namespace
+  shell: kubectl get namespaces
+
+- name: Check Output
+  debug:
+    msg: "{{ output_namespace.stdout_lines }}"
+
+- name: Get Pods
+  become: yes
+  register: output_haproxy_pods
+  shell: kubectl get pods --namespace=haproxy-controller
+  when: "'haproxy-controller' not in namespaces"
+
+- name: Check Output
+  debug:
+    msg: "{{ output_haproxy_pods.stdout_lines }}"
+  when: "'haproxy-controller' not in namespaces"
+  
+- name: Check Services
+  become: yes
+  register: output_svc
+  shell: kubectl get svc -A
+
+- name: Check Output
+  debug:
+    msg: "{{ output_svc.stdout_lines }}"
+
+- name: Enable/Start kubelet service
+  become: yes
+  service:
+    enabled: yes
+    state: started
+    name: kubelet

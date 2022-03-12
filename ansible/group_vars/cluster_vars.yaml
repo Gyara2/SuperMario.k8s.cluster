@@ -1,0 +1,18 @@
+---
+
+# Kube repo
+
+base_url: "https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64"
+
+gpg_keys: "https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg"
+
+#
+
+crio_out_dir: ['/etc/yum.repos.d/devel:kubic:libcontainers:stable.repo', '/etc/yum.repos.d/devel:kubic:libcontainers:stable:cri-o:1.23:1.23.1.repo']
+
+crio_repo_url: ['https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8_Stream/devel:kubic:libcontainers:stable.repo', 'https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:1.23:1.23.1/CentOS_8_Stream/devel:kubic:libcontainers:stable:cri-o:1.23:1.23.1.repo']
+
+packages: ['kubelet', 'kubeadm', 'kubectl']
+
+# pods_net: "10.244.0.0/16" 
+pods_net: "10.1.0.0/16"

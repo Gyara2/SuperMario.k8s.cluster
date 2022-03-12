@@ -1,0 +1,7 @@
+---
+
+- name: Creates a directory to be exported by NFS
+  file:
+    path: "{{ nfs_dir }}"
+    state: directory
+  become: yes

@@ -1,0 +1,15 @@
+---
+
+kube_ports: ['6443', '2379', '2380', '10250', '10251', '10252', '10255']
+
+net_mask: "/24" # Adapt this mask to yours environment
+
+calico_conf: "https://docs.projectcalico.org/manifests/canal.yaml"
+
+haproxy_url: "https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml"
+
+kube_user: "kubeadmin"
+
+pods_net: "10.1.0.0/16"
+
+sdn_ports: ['8285', '8472']

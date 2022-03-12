@@ -1,0 +1,7 @@
+---
+
+# Specify necessary packages
+repos: ['chrony', 'nfs-utils', 'nfs4-acl-tools', 'wget']
+
+# Declared services
+services: ['chronyd']

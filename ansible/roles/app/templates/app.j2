@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: supermario-game
+  namespace: supermario-game
+  labels:
+    app: supermario-game
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: supermario-game
+  template:
+    metadata:
+      labels:
+        app: supermario-game
+    spec:
+      containers:
+      - name: supermario-game
+        image: pengbai/docker-supermario
+        ports:
+        - containerPort: 8600
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          successThreshold: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: supermario-service
+    namespace: supermario-game
+spec:
+    selector:
+      app: supermario-game
+    ports:
+    - name: http
+      protocol: TCP
+      port: 80 # puerto en el que escucha el servicio
+      targetPort: 8080 # puerto en el que escucha el contenedor

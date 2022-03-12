@@ -1,0 +1,9 @@
+---
+
+- name: Configure master node
+  hosts: master
+  vars_files:
+    - "group_vars/master_vars.yaml"
+  gather_facts: false
+  roles:
+    - master

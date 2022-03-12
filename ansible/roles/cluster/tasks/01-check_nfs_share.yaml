@@ -1,0 +1,15 @@
+---
+    
+- name: Check NFS share
+  become: yes
+  register: result
+  shell: showmount -e '{{ hostvars[item]['internal_ip'] }}'
+  with_items:
+    - "{{ groups['nfs'] }}"
+
+- name: Check mount shared output
+  debug:
+    msg: "Executed in: {{ inventory_hostname }}, Result: {{ item.stdout }}"
+  loop: "{{ result.results }}"
+  loop_control:
+    label: "{{ item.item }}"

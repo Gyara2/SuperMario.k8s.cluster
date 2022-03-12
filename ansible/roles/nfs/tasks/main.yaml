@@ -1,0 +1,8 @@
+---
+
+- include_tasks: 01-repos.yaml
+- include_tasks: 02-services.yaml
+- include_tasks: 03-create_nfs_dir.yaml
+- include_tasks: 04-exports_cfg.yaml
+- include_tasks: 05-open_fw_ports.yaml
+- include_tasks: 06-reload_fw.yaml

@@ -1,0 +1,16 @@
+---
+## App vars
+
+namespace_name: "supermario"
+
+deployment_name: "webapp"
+
+app_name: "supermario"
+
+# https://superuser.com/questions/1370088/how-to-count-the-number-of-elements-in-an-array-in-ansible
+replics_count: "{{ groups['workers'] | length }}"
+
+container_image: "pengbai/docker-supermario"
+
+container_port: "8600" 
+

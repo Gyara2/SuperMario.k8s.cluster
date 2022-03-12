@@ -1,0 +1,19 @@
+---
+
+- name: Set node_hosts
+  become: yes
+  set_fact:
+    node_hosts: "{{ groups['cluster'] }}"
+
+  # https://stackoverflow.com/questions/32297456/how-to-ignore-ansible-ssh-authenticity-checking
+- name: Check SSH known_hosts for {{ node_hosts }}
+  local_action: shell ssh-keygen -F {{ node_hosts }}
+  register: checkForKnownHostsEntry
+  failed_when: false
+  changed_when: false
+  ignore_errors: yes
+- name: Add {{ node_hosts }} to SSH known hosts automatically
+  when: checkForKnownHostsEntry.rc == 1
+  changed_when: checkForKnownHostsEntry.rc == 1
+  set_fact:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'

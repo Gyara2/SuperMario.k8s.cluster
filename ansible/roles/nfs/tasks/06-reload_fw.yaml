@@ -1,0 +1,10 @@
+---
+
+- name: Reload firewall service
+  become: yes
+  shell: firewall-cmd --reload
+  register: result
+
+- name: Check Reload output
+  debug:
+    msg: "Result: {{ result.stdout }}"

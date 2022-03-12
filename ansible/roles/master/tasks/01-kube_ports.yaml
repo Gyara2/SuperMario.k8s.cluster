@@ -1,0 +1,27 @@
+---
+  # https://docs.ansible.com/ansible/latest/collections/ansible/posix/firewalld_module.html
+- name: Open required kubernetes ports
+  become: yes
+  register: output
+  firewalld:
+    permanent: yes
+    port: "{{ item }}/tcp"
+    immediate: yes
+    state: enabled
+  with_items:
+    - "{{ kube_ports }}"
+
+- name: Check Output
+  debug:
+    msg: 
+      - "Port: {{ item['invocation']['module_args'].port }}"
+      - "State: {{ item['invocation']['module_args'].state }}"
+  loop: "{{ output.results }}"
+  loop_control:
+    label: "{{ item['invocation']['module_args'].port }}"
+
+- name: Reload firewall service
+  become: yes
+  service:
+    name: firewalld
+    state: reloaded

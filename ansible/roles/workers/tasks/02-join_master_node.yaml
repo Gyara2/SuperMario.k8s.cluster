@@ -1,0 +1,81 @@
+---
+
+- name: Check if already deployed
+  become: yes
+  register: current_nodes
+  shell: kubectl get nodes -o custom-columns=NAME:.metadata.name
+  delegate_to: "{{ item }}"
+  with_items:
+    - "{{ groups['master'] }}"
+
+- name: Set current nodes fact
+  set_fact:
+    current_nodes: "{{ item.stdout_lines }}"
+  loop: "{{ current_nodes.results }}"
+  loop_control:
+    label: "Nodos actuales"
+
+- name: Check current nodes
+  debug:
+    msg: "{{ hostvars[inventory_hostname]['current_nodes'] }}"
+
+  #https://stackoverflow.com/questions/51126164/how-do-i-find-the-join-command-for-kubeadm-on-the-master
+  #https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html
+- name: Check join token
+  become: yes
+  register: token_join
+  shell: kubeadm token create --print-join-command
+  delegate_to: "{{ item }}"
+  loop: "{{ groups['master'] }}"
+  when: inventory_hostname not in hostvars[inventory_hostname]['current_nodes']
+
+# - name: Install pexpect
+#   pip:
+#     name: pexpect
+#   become: yes
+
+# - name: Reset config
+#   become: yes
+#   expect:
+#     command: kubeadm reset
+#     responses:
+#       'y/N' : 'y'
+
+- name: Join master node
+  become: yes
+  register: result
+  shell: "{{ item.stdout }}" 
+  loop: "{{ token_join.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: inventory_hostname not in current_nodes
+
+- name: Check IPs
+  become: yes
+  shell: ip addr
+
+- name: Install netaddr
+  become: yes
+  pip:
+    name: netaddr
+
+- name: Obtain Pods network
+  set_fact:
+    pods_net: "{{ pods_net }}"
+
+  # It is necessary 'gather_facts: true' to get {{ ansible_all_ipv4_addresses }}
+  # https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html
+  # https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#retrying-a-task-until-a-condition-is-met
+# - name: Check IP match with Pods subnet
+#   debug:
+#     msg: "{{ ansible_all_ipv4_addresses | ansible.netcommon.reduce_on_network( hostvars[inventory_hostname]['pods_net'] ) }}" # "{{ ['192.169.2.0'] | ansible.netcommon.reduce_on_network( '192.169.0.0/16' ) }}"
+#   register: match_result
+#   until: match_result.msg | length > 0
+#   retries: 10
+#   delay: 30
+#   ignore_errors: true
+
+# - name: Check match
+#   debug:
+#     msg: "{{ match_result.msg }}"
+  

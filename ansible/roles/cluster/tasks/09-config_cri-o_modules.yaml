@@ -1,0 +1,54 @@
+--- 
+
+- block:
+
+  - name: Check if crio.conf already exists
+    become: yes
+    register: confstat
+    stat:
+      path: /etc/modules-load.d/crio.conf
+
+  - name: Create crio config file, if it doesnt exist already
+    become: yes
+    file:
+      path: /etc/modules-load.d/crio.conf
+      state: touch
+    when: not confstat.stat.exists
+
+  - name: Config cri-o modules
+    become: yes
+    register: output
+    lineinfile:
+      path: /etc/modules-load.d/crio.conf
+      line: "{{ item.line }}"
+    loop:
+      - { line: overlay }
+      - { line: br_netfilter }
+
+
+  rescue:
+    
+    - name: Fail, so we will create file
+      become: yes
+      file:
+        path: /etc/modules-load.d/crio.conf
+        state: touch
+      
+    - name: Config cri-o modules
+      become: yes
+      register: output
+      lineinfile:
+        path: /etc/modules-load.d/crio.conf
+        line: "{{ item.line }}"
+      loop:
+        - { line: overlay }
+        - { line: br_netfilter }
+
+  always:
+  
+      # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_lookup.html
+    - name: Check crio.conf content
+      debug:
+        msg: "{{ item.split('\n') }}"
+      with_file:
+        - "/etc/modules-load.d/crio.conf"

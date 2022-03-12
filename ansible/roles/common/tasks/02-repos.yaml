@@ -1,0 +1,11 @@
+---
+
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/wait_for_connection_module.html
+- name: Wait for system to become reachable
+  wait_for_connection:
+
+- name: Install packages
+  dnf:
+    name: "{{ repos }}"
+    state: latest
+  become: yes

@@ -1,0 +1,9 @@
+---
+
+- name: Preconfigured all nodes
+  hosts: all
+  vars_files:
+    - "group_vars/common_vars.yaml"
+  gather_facts: false
+  roles:
+    - common

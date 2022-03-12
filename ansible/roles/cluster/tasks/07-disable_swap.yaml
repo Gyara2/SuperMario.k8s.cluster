@@ -1,0 +1,23 @@
+---
+
+- name: Disable swap
+  become: yes
+  shell: swapoff -a
+
+- name: Edit /etc/fstab to remove swap lines
+  become: yes
+  lineinfile:
+    path: /etc/fstab
+    regex: "\\s*(swap)\\s*"
+    line: ""
+
+- name: Verify /etc/fstab 
+  become: yes
+  register: output
+  shell: cat /etc/fstab
+
+- name: Check Output
+  debug:
+    msg:  
+      - "Output: {{ output.stdout.split('\n') }}"
+      - "Changed: {{ output.changed }}"

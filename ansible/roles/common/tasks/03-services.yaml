@@ -1,0 +1,23 @@
+---
+
+- name: Enable services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+    masked: no
+  become: yes
+  with_items:
+    - "{{ services }}"
+
+# - name: Enable firewalld service
+#   become: yes
+#   firewalld:
+#     state: enabled
+
+- name: Enable/Start firewalld service
+  become: yes
+  systemd:
+    state: started
+    enabled: yes
+    name: firewalld

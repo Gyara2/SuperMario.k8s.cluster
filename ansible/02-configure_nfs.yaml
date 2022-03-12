@@ -1,0 +1,9 @@
+---
+
+- name: Configure NFS node
+  hosts: nfs
+  vars_files:
+    - "group_vars/nfs_vars.yaml"
+  gather_facts: false
+  roles:
+    - nfs

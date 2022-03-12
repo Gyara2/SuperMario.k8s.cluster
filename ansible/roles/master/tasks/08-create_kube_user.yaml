@@ -1,0 +1,48 @@
+---
+
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/group_module.html
+- name: Ensure group "{{ kube_user }}" exists
+  become: yes
+  group:
+    name: "{{ kube_user }}"
+    state: present
+
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/user_module.html#examples
+- name: Create kubeadmin user
+  become: yes
+  user:
+    name: "{{ kube_user }}"
+    groups: "{{ kube_user }}"
+    append: yes
+    state: present
+    createhome: yes
+    shell: /bin/bash
+
+- name: Create parents dir
+  become: yes
+  file: 
+   path: "/home/{{ kube_user }}/.kube"
+   recurse: yes
+   state: directory
+  
+- name: Replicate kubernetes conf file
+  become: yes
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/{{ kube_user }}/.kube/config
+    owner: "{{ kube_user }}"
+    group: "{{ kube_user }}"
+    remote_src: yes
+
+  #https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+- name: Create sudoers file
+  become: yes
+  file: 
+   path: "/etc/sudoers.d/{{ kube_user }}"
+   state: touch
+
+- name: Set {{ kube_user }} sudoers config 
+  become: yes
+  lineinfile:
+    dest: "/etc/sudoers.d/{{ kube_user }}"
+    line: 'ALL            ALL = (ALL) NOPASSWD: ALL'

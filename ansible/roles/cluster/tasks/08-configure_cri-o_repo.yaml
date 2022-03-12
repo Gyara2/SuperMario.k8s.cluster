@@ -1,0 +1,10 @@
+---
+
+- name: Configure cri-o repo
+  become: yes
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.dir }}"
+  loop:
+    - { dir: "{{ crio_out_dir[0] }}", url: "{{ crio_repo_url[0] }}"  }
+    - { dir: "{{ crio_out_dir[1] }}", url: "{{ crio_repo_url[1] }}"  }

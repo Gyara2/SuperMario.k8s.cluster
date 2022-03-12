@@ -1,0 +1,35 @@
+---
+  # https://firewalld.org/documentation/man-pages/firewalld.richlanguage.html
+  ## Example 6
+- name: Allow workers access
+  become: yes
+  register: output
+  firewalld:
+    rich_rule: rule family="ipv4" source address="{{ hostvars[item]['internal_ip'] }}{{ net_mask }}" accept
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{ groups['workers'] }}"
+
+- name: Reload firewall service
+  register: reload_output
+  become: yes
+  service:
+    name: firewalld
+    state: reloaded
+
+- name: Check Output
+  debug:
+    msg:  
+      - "Rule: {{ item['invocation']['module_args'].rich_rule }}"
+      - "State: {{ item['invocation']['module_args'].state }}"
+  loop: "{{ output.results }}"
+  loop_control:
+    label: "{{ item['item'] }}"
+
+
+
+# https://github.com/kubernetes/kubernetes/issues/66108
+- name: Init Kube and create config.yaml file {{ inventory_hostname }}
+  become: yes
+  shell: kubeadm init --pod-network-cidr {{ pods_net }}

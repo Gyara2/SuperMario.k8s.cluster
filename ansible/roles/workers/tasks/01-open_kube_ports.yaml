@@ -1,0 +1,29 @@
+---
+
+- name: Open required kubernetes ports
+  become: yes
+  register: output
+  firewalld:
+    zone: public
+    permanent: yes
+    port: "{{ item.port }}"
+    immediate: yes
+    state: enabled
+  loop:
+    - { port: "10250/tcp" }
+    - { port: "30000-32767/tcp" }
+
+- name: Check Output
+  debug:
+    msg: 
+      - "Port: {{ item['invocation']['module_args'].port }}"
+      - "State: {{ item['invocation']['module_args'].state }}"
+  loop: "{{ output.results }}"
+  loop_control:
+    label: "{{ item['invocation']['module_args'].port }}"
+
+- name: Reload firewall service
+  become: yes
+  service:
+    name: firewalld
+    state: reloaded

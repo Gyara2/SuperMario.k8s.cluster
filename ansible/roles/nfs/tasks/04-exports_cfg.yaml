@@ -1,0 +1,24 @@
+---
+
+- name: Update the /etc/exports file with node name
+  become: yes
+  register: exportline
+  lineinfile:
+    path: /etc/exports
+    line: "/srv/nfs       {{ hostvars[item]['internal_ip'] }}(rw,sync)"
+  with_items:
+    - "{{ groups['cluster'] }}"
+
+- name: Add header for export registry
+  become: yes
+  changed_when: exportline == 1
+  lineinfile:
+    path: /etc/exports
+    insertbefore: "^(/srv/nfs)\\s*({{ hostvars[item]['internal_ip'] }})"
+    line: "#{{ item }}"
+  with_items:
+    - "{{ groups['cluster'] }}"
+
+- name: Reexport all directories, sync and apply new conf
+  become: yes
+  shell: exportfs -r

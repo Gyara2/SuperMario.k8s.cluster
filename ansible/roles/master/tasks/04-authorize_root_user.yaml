@@ -1,0 +1,30 @@
+---
+
+- name: Specify conf file
+  become: yes
+  shell: export KUBECONFIG=/etc/kubernetes/admin.conf
+
+- name: Create parents dir
+  become: yes
+  file: 
+   path: "/root/.kube"
+   recurse: yes
+   state: directory
+
+- name: Replicate conf file
+  become: yes
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    owner: root
+    group: root
+    remote_src: yes
+
+- name: Get nodes
+  become: yes
+  register: output
+  shell: kubectl get nodes
+
+- name: Check output
+  debug:
+    msg: "{{ output.stdout_lines }}"

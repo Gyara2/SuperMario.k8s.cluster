@@ -1,0 +1,6 @@
+---
+
+- include_tasks: 01-keyscheck.yaml
+- include_tasks: 02-repos.yaml
+- include_tasks: 03-services.yaml
+- include_tasks: 04-disableselinux.yaml

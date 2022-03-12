@@ -1,0 +1,27 @@
+---
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/dnf_module.html#examples
+- name: Install cri-o
+  become: yes
+  dnf:
+    name: cri-o
+    state: latest
+    
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_module.html#examples
+- name: Enable/Start cri-o service
+  become: yes
+  systemd:
+    state: started
+    enabled: yes
+    name: crio
+
+- name: Collect system services facts
+  service_facts:
+  register: output
+
+- name: Check cri-o service status
+  debug: 
+    msg: 
+      - "Service name: {{ output.ansible_facts.services['crio.service'].name}}"
+      - "Current state: {{ output.ansible_facts.services['crio.service'].state}}"
+      - "Status: {{ output.ansible_facts.services['crio.service'].status}}"
+  failed_when: ('crio.service' not in output.ansible_facts.services) or (output.ansible_facts.services['crio.service'].state != 'running')

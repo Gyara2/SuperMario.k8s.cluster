@@ -1,0 +1,38 @@
+---
+  # https://stackoverflow.com/questions/63683250/how-to-catch-a-failure-in-ansible-and-continue-the-playbook-for-specific-task
+- block:
+
+    # https://stackoverflow.com/questions/38847824/ansible-how-to-get-service-status-by-ansible
+  - name: Check if firewall is already active
+    become: yes
+    register: output
+    service_facts:
+
+
+  # https://docs.ansible.com/ansible/latest/user_guide/playbooks_conditionals.html
+  - name: Output message
+    debug: 
+      msg: 
+        - "Service name: {{ output.ansible_facts.services['firewalld.service'].name}}"
+        - "Current state: {{ output.ansible_facts.services['firewalld.service'].state}}"
+        - "Status: {{ output.ansible_facts.services['firewalld.service'].status}}"
+    failed_when: ('firewalld.service' not in output.ansible_facts.services) or (output.ansible_facts.services['firewalld.service'].state != 'running')
+
+
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/service_module.html#examples
+  rescue:
+  
+    - name: Fail, so we will start firewall service
+      become: yes
+      register: rescue_output
+      service:
+        name: firewalld
+        state: restarted
+    
+    - name: Check if rescued
+      debug:
+        msg: 
+          - "Service name: {{ rescue_output.name }}"
+          - "Changed: {{ rescue_output.changed }}"
+          - "State: {{ rescue_output.state }}"
+          - "Service actived at: {{ rescue_output.status.ActiveEnterTimestamp }}"

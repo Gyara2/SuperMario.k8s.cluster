@@ -1,0 +1,9 @@
+---
+
+- name: Configure app
+  hosts: master
+  vars_files:
+    - "group_vars/app_vars.yaml"
+  gather_facts: false
+  roles:
+    - app

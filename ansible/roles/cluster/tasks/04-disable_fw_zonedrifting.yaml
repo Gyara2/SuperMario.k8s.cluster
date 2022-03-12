@@ -1,0 +1,10 @@
+---
+
+- name: Disable 'AllowZoneDrifting' if it is enabled
+  become: yes
+  register: output
+  lineinfile:
+    path: /etc/firewalld/firewalld.conf
+    regex: '^AllowZoneDrifting=yes$'
+    line: AllowZoneDrifting=no
+    backup: yes

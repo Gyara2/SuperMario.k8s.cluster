@@ -1,0 +1,45 @@
+---
+
+- name: Create app yaml file
+  become: yes
+  template:
+    src: templates/app.j2
+    dest: /home/{{ ansible_user }}/{{ namespace_name }}.yaml
+
+- name: Check template
+  become: yes
+  register: templ_content
+  shell: cat /home/{{ ansible_user }}/{{ namespace_name }}.yaml
+
+- name: Check output
+  debug:
+    msg: "{{ templ_content.stdout_lines }}"
+    
+- name: Deploy app
+  become: yes
+  register: result_deployment
+  shell: kubectl apply -f /home/{{ ansible_user }}/{{ namespace_name }}.yaml
+
+- name: Check output
+  debug:
+    msg: "{{ result_deployment.stdout_lines }}"
+
+- name: Create ingress file
+  become: yes
+  template:
+    src: templates/ingress.j2
+    dest: /home/{{ ansible_user }}/ingress.yaml
+
+- name: Deploy ingress
+  become: yes
+  shell: kubectl apply -f /home/{{ ansible_user }}/ingress.yaml
+
+- name: Create configmap file
+  become: yes
+  template:
+    src: templates/configmap.j2
+    dest: /home/{{ ansible_user }}/configmap.yaml
+
+- name: Deploy configmap
+  become: yes
+  shell: kubectl apply -f /home/{{ ansible_user }}/configmap.yaml
