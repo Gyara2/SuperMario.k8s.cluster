@@ -1,15 +1,14 @@
 ---
 
-# - include_tasks: 01-check_nfs_share.yaml # We dont have nfs
-
-# - include_tasks: 02-configure_DNS_resolution.yaml
-# - include_tasks: 03-ensure_fw_actived.yaml
-# - include_tasks: 04-disable_fw_zonedrifting.yaml
-# - include_tasks: 05-active_masquerading.yaml
-# - include_tasks: 06-config_k8s_fw.yaml
-# - include_tasks: 07-disable_swap.yaml
-# - include_tasks: 08-configure_cri-o_repo.yaml
-# - include_tasks: 09-config_cri-o_modules.yaml
-# - include_tasks: 10-install_cri-o.yaml
-# - include_tasks: 11-config_kube_repo.yaml
+- include_tasks: 01-check_nfs_share.yaml
+- include_tasks: 02-configure_DNS_resolution.yaml
+- include_tasks: 03-ensure_fw_actived.yaml
+- include_tasks: 04-disable_fw_zonedrifting.yaml
+- include_tasks: 05-active_masquerading.yaml
+- include_tasks: 06-config_k8s_fw.yaml
+- include_tasks: 07-disable_swap.yaml
+- include_tasks: 08-configure_cri-o_repo.yaml
+- include_tasks: 09-config_cri-o_modules.yaml
+- include_tasks: 10-install_cri-o.yaml
+- include_tasks: 11-config_kube_repo.yaml
 - include_tasks: 12-install_kube.yaml

@@ -1,5 +1,7 @@
 --- 
 
+  # This task will allow kubernetes to correctly handle traffic with the firewall.
+  # https://linuxconfig.org/how-to-turn-on-off-ip-forwarding-in-linux
 - block:
 
   - name: Check if k8s.conf already exists

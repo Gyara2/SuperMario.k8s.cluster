@@ -1,5 +1,6 @@
 ---
     
+  # Check if nodes can see the share  
 - name: Check NFS share
   become: yes
   register: result

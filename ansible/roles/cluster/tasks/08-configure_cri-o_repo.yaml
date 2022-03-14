@@ -1,5 +1,6 @@
 ---
 
+  # This task load crio repository links
 - name: Configure cri-o repo
   become: yes
   get_url:

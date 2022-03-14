@@ -1,5 +1,7 @@
 --- 
 
+  # Configure kube repository using a template.
+  # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html
 - name: Config kube repo
   become: yes
   template:

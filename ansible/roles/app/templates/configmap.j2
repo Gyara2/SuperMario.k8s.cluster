@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: haproxy-configmap
-  namespace: supermario-game
+  namespace: {{ namespace_name }}
 data:
   servers-increment: "42"
   ssl-redirect: "OFF"

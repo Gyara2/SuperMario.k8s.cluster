@@ -1,10 +1,16 @@
 ---
 
+  # This task could be controversial since we skip checking the ssh keys (knownhost fingerprint), 
+  # but the goal is to avoid the tedious step of accepting the 'yes' input from the user. 
+  # Say this task will fail if any of the fingerprints changes.
+
+  # Set (all) nodes hosts
 - name: Set node_hosts
   become: yes
   set_fact:
     node_hosts: "{{ groups['cluster'] }}"
 
+  # As I said before, this task, ignore only once fingerprint checking
   # https://stackoverflow.com/questions/32297456/how-to-ignore-ansible-ssh-authenticity-checking
 - name: Check SSH known_hosts for {{ node_hosts }}
   local_action: shell ssh-keygen -F {{ node_hosts }}

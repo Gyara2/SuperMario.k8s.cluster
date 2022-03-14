@@ -1,5 +1,6 @@
 ---
 
+  # Finally, the ports will be opened to enable access.
 - name: Open NFS ports to enable access
   become: yes
   shell: "firewall-cmd --permanent --add-service={{ item }}"
@@ -8,7 +9,7 @@
   with_items:
     - "{{ nfs_services }}"
 
-# https://www.middlewareinventory.com/blog/ansible-dict-object-has-no-attribute-stdout-or-stderr-how-to-resolve/
+  # https://www.middlewareinventory.com/blog/ansible-dict-object-has-no-attribute-stdout-or-stderr-how-to-resolve/
 - name: Check output
   debug:
     msg: "Result: {{ item.item }}, {{ item.stdout }}"

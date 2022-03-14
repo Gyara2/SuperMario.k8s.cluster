@@ -1,4 +1,4 @@
 ---
+# Set pods net where cluster nodes will run the application
 
-# pods_net: "10.244.0.0/16"
 pods_net: "10.1.0.0/16"

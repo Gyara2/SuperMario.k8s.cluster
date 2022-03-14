@@ -1,5 +1,6 @@
 ---
 
+  # Authorize root user to use kubectl 
 - name: Specify conf file
   become: yes
   shell: export KUBECONFIG=/etc/kubernetes/admin.conf

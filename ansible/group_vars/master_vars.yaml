@@ -1,15 +1,29 @@
 ---
 
+# Necessary Kubernetes open ports to manage cluster
+
 kube_ports: ['6443', '2379', '2380', '10250', '10251', '10252', '10255']
+
+# This mask should meet with Terraform 'myNet' mask
 
 net_mask: "/24" # Adapt this mask to yours environment
 
+# Calico yaml config file, this will be used to deploy calico pod
+
 calico_conf: "https://docs.projectcalico.org/manifests/canal.yaml"
+
+# Calico yaml config file, this will be used to deploy HAProxy pod
 
 haproxy_url: "https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml"
 
+# Specify kubernetes user
+
 kube_user: "kubeadmin"
 
+# Set pods net where cluster nodes will run the application
+
 pods_net: "10.1.0.0/16"
+
+# Necessary open ports to SDN works
 
 sdn_ports: ['8285', '8472']

@@ -1,4 +1,7 @@
 ---
+
+  # Here, will be check if firewall is ready.
+  # In this tasks, we use block, rescue (and optionally 'always') for try some possible errors.
   # https://stackoverflow.com/questions/63683250/how-to-catch-a-failure-in-ansible-and-continue-the-playbook-for-specific-task
 - block:
 

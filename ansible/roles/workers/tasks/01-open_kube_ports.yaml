@@ -1,5 +1,19 @@
 ---
 
+ # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html#examples
+- name: Reboot to apply SDN conf
+  become: yes 
+  reboot: 
+  delegate_to: "{{ item }}"
+  with_items:
+    - "{{ groups['master'] }}"
+
+ # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html#examples
+- name: Reboot to apply SDN conf
+  become: yes 
+  reboot: 
+  
+  # Open required communication ports of kubernetes
 - name: Open required kubernetes ports
   become: yes
   register: output

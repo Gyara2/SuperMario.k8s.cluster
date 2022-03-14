@@ -1,5 +1,6 @@
 ---
 
+  # Here will enabled chronyd service, so we will synchronize the vms.
 - name: Enable services
   systemd:
     name: "{{ item }}"
@@ -10,11 +11,7 @@
   with_items:
     - "{{ services }}"
 
-# - name: Enable firewalld service
-#   become: yes
-#   firewalld:
-#     state: enabled
-
+  # Active and enable firewalld service as pretask.
 - name: Enable/Start firewalld service
   become: yes
   systemd:

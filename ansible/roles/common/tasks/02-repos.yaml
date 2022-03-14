@@ -1,11 +1,14 @@
 ---
 
+  # For unrechable prevention, this task will stay until vms be ready for connection.
   # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/wait_for_connection_module.html
 - name: Wait for system to become reachable
   wait_for_connection:
 
+  # Install preconfiguration packages as chronyd to sync all vms clock,
+  # and nfs packages to deploy nfs configuration.
 - name: Install packages
+  become: yes
   dnf:
     name: "{{ repos }}"
     state: latest
-  become: yes

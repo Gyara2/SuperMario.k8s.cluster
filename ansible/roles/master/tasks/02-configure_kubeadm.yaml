@@ -1,5 +1,6 @@
 ---
 
+  # Configure kubeadm that will create the basic structure of our cluster.
 - name: Configure kubeadm
   become: yes
   register: output

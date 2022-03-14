@@ -1,5 +1,6 @@
 ---
-
+  
+  # First, we check if the nodes have been previously deployed
 - name: Check if already deployed
   become: yes
   register: current_nodes
@@ -19,6 +20,7 @@
   debug:
     msg: "{{ hostvars[inventory_hostname]['current_nodes'] }}"
 
+  # Join token is created
   #https://stackoverflow.com/questions/51126164/how-do-i-find-the-join-command-for-kubeadm-on-the-master
   #https://docs.ansible.com/ansible/latest/user_guide/playbooks_delegation.html
 - name: Check join token
@@ -29,18 +31,7 @@
   loop: "{{ groups['master'] }}"
   when: inventory_hostname not in hostvars[inventory_hostname]['current_nodes']
 
-# - name: Install pexpect
-#   pip:
-#     name: pexpect
-#   become: yes
-
-# - name: Reset config
-#   become: yes
-#   expect:
-#     command: kubeadm reset
-#     responses:
-#       'y/N' : 'y'
-
+  # Only if they have not been deployed, they join the master node
 - name: Join master node
   become: yes
   register: result
@@ -50,32 +41,28 @@
     label: "{{ item.item }}"
   when: inventory_hostname not in current_nodes
 
-- name: Check IPs
-  become: yes
-  shell: ip addr
+ # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html#examples
+- name: Reboot to apply SDN conf
+  become: yes 
+  reboot: 
 
-- name: Install netaddr
-  become: yes
-  pip:
-    name: netaddr
+ # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html#examples
+- name: Reboot to apply SDN conf
+  run_once: true
+  become: yes 
+  reboot: 
+  delegate_to: "{{ item }}"
+  with_items:
+    - "{{ groups['master'] }}"
 
-- name: Obtain Pods network
-  set_fact:
-    pods_net: "{{ pods_net }}"
-
-  # It is necessary 'gather_facts: true' to get {{ ansible_all_ipv4_addresses }}
-  # https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html
-  # https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#retrying-a-task-until-a-condition-is-met
-# - name: Check IP match with Pods subnet
-#   debug:
-#     msg: "{{ ansible_all_ipv4_addresses | ansible.netcommon.reduce_on_network( hostvars[inventory_hostname]['pods_net'] ) }}" # "{{ ['192.169.2.0'] | ansible.netcommon.reduce_on_network( '192.169.0.0/16' ) }}"
-#   register: match_result
-#   until: match_result.msg | length > 0
-#   retries: 10
-#   delay: 30
-#   ignore_errors: true
-
-# - name: Check match
-#   debug:
-#     msg: "{{ match_result.msg }}"
-  
+ # is open source proxy and load balancing server software. 
+  # It provides high availability at the network and application layers,
+  # improving speed and performance by distributing workload across multiple servers.
+  # https://www.haproxy.com/products/haproxy-enterprise-kubernetes-ingress-controller/#:~:text=HAProxy%20Ingress%20Controller%20is%20the,Host%20header%20and%20request%20path.
+- name: Wait for port 6443 to become open on the host
+  wait_for:
+    port: 6443
+    delay: 10
+  delegate_to: "{{ item }}"
+  with_items:
+    - "{{ groups['master'] }}"

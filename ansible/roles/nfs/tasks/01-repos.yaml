@@ -1,5 +1,6 @@
 ---
 
+  # Install necessary nfs packages 
 - name: Install packages
   dnf:
     name: "{{ repos }}"

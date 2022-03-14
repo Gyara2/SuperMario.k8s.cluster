@@ -1,9 +1,12 @@
 ---
 
+  # As we can se in the above link, the performance is the goal and the reason.
+  # https://serverfault.com/questions/881517/why-disable-swap-on-kubernetes
 - name: Disable swap
   become: yes
   shell: swapoff -a
 
+  # Should remove swap line because dont want auto mount.
 - name: Edit /etc/fstab to remove swap lines
   become: yes
   lineinfile:

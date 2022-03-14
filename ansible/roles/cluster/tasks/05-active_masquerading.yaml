@@ -1,10 +1,10 @@
 ---
 
-# With this task will be create a new rule, this rule will ensure that the packets that leave 
-# our machine through an interface, change their source address for that of the exit interface
+  # With this task will be create a new rule, this rule will ensure that the packets that leave 
+  # our machine through an interface, change their source address for that of the exit interface.
 
-# Example with an explanation
-# https://myredhatcertification.wordpress.com/2015/04/26/firewalld-masquerade-forwarding-transparent-proxy/
+  # Example with an explanation
+  # https://myredhatcertification.wordpress.com/2015/04/26/firewalld-masquerade-forwarding-transparent-proxy/
 - name: Enable transparent masquerading
   become: yes
   register: output_masq

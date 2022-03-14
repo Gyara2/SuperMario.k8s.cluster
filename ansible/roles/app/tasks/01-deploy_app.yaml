@@ -1,15 +1,27 @@
 ---
 
+  # This tasks will deploy the app
+  ## Firstly, specify a namespace which will be referenced for the rest of elements
+  ## Secondly, create a app.yaml with app configurations (listening ports, services, ...)
+  ## Then, setup ingress.yaml which will manage container requests
+  ## Now, configure configmap.yaml to store all configurations
+  ## Finally, reboot all cluster nodes to ensure app changes are apply.
+
+- name: Create a namespace
+  become: yes
+  shell: kubectl create namespace {{ namespace_name }}
+  ignore_errors: true
+
 - name: Create app yaml file
   become: yes
   template:
     src: templates/app.j2
-    dest: /home/{{ ansible_user }}/{{ namespace_name }}.yaml
+    dest: /home/{{ ansible_user }}/{{ namespace_name }}-app.yaml
 
 - name: Check template
   become: yes
   register: templ_content
-  shell: cat /home/{{ ansible_user }}/{{ namespace_name }}.yaml
+  shell: cat /home/{{ ansible_user }}/{{ namespace_name }}-app.yaml
 
 - name: Check output
   debug:
@@ -18,7 +30,7 @@
 - name: Deploy app
   become: yes
   register: result_deployment
-  shell: kubectl apply -f /home/{{ ansible_user }}/{{ namespace_name }}.yaml
+  shell: kubectl apply -f /home/{{ ansible_user }}/{{ namespace_name }}-app.yaml
 
 - name: Check output
   debug:
@@ -28,18 +40,69 @@
   become: yes
   template:
     src: templates/ingress.j2
-    dest: /home/{{ ansible_user }}/ingress.yaml
+    dest: /home/{{ ansible_user }}/{{ namespace_name }}-ingress.yaml
+
+- name: Check template
+  become: yes
+  register: templ_content
+  shell: cat /home/{{ ansible_user }}/{{ namespace_name }}-ingress.yaml
+
+- name: Check output
+  debug:
+    msg: "{{ templ_content.stdout_lines }}"
 
 - name: Deploy ingress
   become: yes
-  shell: kubectl apply -f /home/{{ ansible_user }}/ingress.yaml
+  register: result_deployment
+  shell: kubectl apply -f /home/{{ ansible_user }}/{{ namespace_name }}-ingress.yaml
+
+- name: Check output
+  debug:
+    msg: "{{ result_deployment.stdout_lines }}"
 
 - name: Create configmap file
   become: yes
   template:
     src: templates/configmap.j2
-    dest: /home/{{ ansible_user }}/configmap.yaml
+    dest: /home/{{ ansible_user }}/{{ namespace_name }}-configmap.yaml
+
+- name: Check template
+  become: yes
+  register: templ_content
+  shell: cat /home/{{ ansible_user }}/{{ namespace_name }}-configmap.yaml
+
+- name: Check output
+  debug:
+    msg: "{{ templ_content.stdout_lines }}"
 
 - name: Deploy configmap
   become: yes
-  shell: kubectl apply -f /home/{{ ansible_user }}/configmap.yaml
+  register: result_deployment
+  shell: kubectl apply -f /home/{{ ansible_user }}/{{ namespace_name }}-configmap.yaml
+
+- name: Check output
+  debug:
+    msg: "{{ result_deployment.stdout_lines }}"
+
+ # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html#examples
+- name: Reboot to apply SDN conf
+  run_once: true
+  become: yes 
+  reboot: 
+  delegate_to: "{{ item }}"
+  with_items:
+    - "{{ groups['workers'] }}"
+
+ # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html#examples
+- name: Reboot to apply SDN conf
+  become: yes 
+  reboot: 
+
+ # is open source proxy and load balancing server software. 
+  # It provides high availability at the network and application layers,
+  # improving speed and performance by distributing workload across multiple servers.
+  # https://www.haproxy.com/products/haproxy-enterprise-kubernetes-ingress-controller/#:~:text=HAProxy%20Ingress%20Controller%20is%20the,Host%20header%20and%20request%20path.
+- name: Wait for port 6443 to become open on the host
+  wait_for:
+    port: 6443
+    delay: 10

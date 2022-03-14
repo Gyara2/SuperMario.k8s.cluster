@@ -1,16 +1,38 @@
 ---
+
+## In this file we specify the main vars that will be used in the app deployment.
+## First, check specified ports
+## https://hub.docker.com/r/pengbai/docker-supermario/
+
 ## App vars
 
-namespace_name: "supermario"
+namespace_name: "supermario-game"
 
-deployment_name: "webapp"
+deployment_name: "supermario-game"
 
-app_name: "supermario"
+app_name: "supermario-game"
+
+replics_count: "1"
 
 # https://superuser.com/questions/1370088/how-to-count-the-number-of-elements-in-an-array-in-ansible
-replics_count: "{{ groups['workers'] | length }}"
+# replics_count: "{{ groups['workers'] | length }}"
 
 container_image: "pengbai/docker-supermario"
 
+container_name: "supermario-game"
+
 container_port: "8600" 
 
+container_listening_port: "8080"
+
+## Service vars
+
+service_name: "supermario-service"
+
+service_port: "80"
+
+## Ingress vars
+
+ingress_name: "supermario-ingress"
+
+ingress_host: "supermario.k8s"

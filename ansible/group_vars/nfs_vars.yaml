@@ -1,11 +1,17 @@
 ---
 
+# Install NFS packages
+
 repos: ['nfs-utils', 'net-tools']
 
 # Required services for NFS node
+
 services: ['nfs-server']
+
+# NFS services to allow in firewall 
 
 nfs_services: ['firewall-cmd', 'nfs', 'rpc-bind', 'mountd']
 
 # Directory shared by NFS
-nfs_dir: '/srv/nfs' 
+
+nfs_dir: '/srv/nfs'

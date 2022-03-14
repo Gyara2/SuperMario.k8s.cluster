@@ -1,8 +1,8 @@
 ---
 
-# - include_tasks: 01-kube_ports.yaml
-# - include_tasks: 02-configure_kubeadm.yaml
-# - include_tasks: 03-allow_workers_access.yaml
+- include_tasks: 01-kube_ports.yaml
+- include_tasks: 02-configure_kubeadm.yaml
+- include_tasks: 03-allow_workers_access.yaml
 - include_tasks: 04-authorize_root_user.yaml
 - include_tasks: 05-open_sdn_ports.yaml
 - include_tasks: 06-apply_calico_conf.yaml

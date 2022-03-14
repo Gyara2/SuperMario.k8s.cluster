@@ -1,5 +1,8 @@
 ---
 
+  # In this project, flannel will be used, which will be in charge of assigning the IPS addresses 
+  # to each node so that they can communicate with each other from the network of pods that has been previously defined. 
+  # https://github.com/flannel-io/flannel
 - name: Open necessary SDN ports
   become: yes
   register: output
@@ -10,9 +13,8 @@
     state: enabled
   delegate_to: "{{ item[0] }}"
   with_nested:
-    - "{{ groups['cluster']  }}"
+    - "{{ groups['cluster'] }}"
     - "{{ sdn_ports }}"
-
 
 - name: Check Output
   debug:
@@ -23,7 +25,7 @@
     label: "{{ item[1]['invocation']['module_args'].port }}"
   delegate_to: "{{ item[0] }}"
   with_nested:
-    - "{{ groups['cluster']  }}"
+    - "{{ groups['cluster'] }}"
     - "{{ output.results }}"
     
 - name: Reload firewall service

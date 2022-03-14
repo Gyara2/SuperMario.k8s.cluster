@@ -1,5 +1,6 @@
 ---
 
+  # Reload fw to apply new rules.
 - name: Reload firewall service
   become: yes
   shell: firewall-cmd --reload

@@ -4,6 +4,6 @@
   hosts: master
   vars_files:
     - "group_vars/master_vars.yaml"
-  gather_facts: false
+  gather_facts: true
   roles:
     - master

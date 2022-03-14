@@ -1,6 +1,10 @@
 
 ---
 
+  # is open source proxy and load balancing server software. 
+  # It provides high availability at the network and application layers,
+  # improving speed and performance by distributing workload across multiple servers.
+  # https://www.haproxy.com/products/haproxy-enterprise-kubernetes-ingress-controller/#:~:text=HAProxy%20Ingress%20Controller%20is%20the,Host%20header%20and%20request%20path.
 - name: Wait for port 6443 to become open on the host
   wait_for:
     port: 6443

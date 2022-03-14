@@ -1,4 +1,6 @@
 ---
+
+  # Install cri-o on our nodes
   # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/dnf_module.html#examples
 - name: Install cri-o
   become: yes
@@ -6,6 +8,7 @@
     name: cri-o
     state: latest
     
+  # Enable and start crio service.  
   # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_module.html#examples
 - name: Enable/Start cri-o service
   become: yes

@@ -1,13 +1,27 @@
+# Ansible v2.12 > required
+# Terraform v1.1.5
+
+# Aquí definiremos aquellas variables comunes a todos los nodos
 [all:vars]
 ansible_user=adminUsername
 
 [master]
-master.azure ansible_host=20.126.75.159 internal_ip=10.0.1.10
+master.azure ansible_host=20.126.2.86 internal_ip=10.0.1.10
 
 [workers]
-worker01.azure ansible_host=20.126.136.78 internal_ip=10.0.1.11
-worker02.azure ansible_host=20.126.8.84 internal_ip=10.0.1.12
+worker01.azure ansible_host=20.126.36.159 internal_ip=10.0.1.11
+worker02.azure ansible_host=20.126.5.197 internal_ip=10.0.1.12
 
+# En el caso que ocupa esta práctica, dadas las limitaciones de uso de la cuenta de azure,
+# reutilizaremos el nodo master (que es el que tiene mejores prestaciones) para cumplimentar
+# el apartado que correponde a la configuración del nodo NFS.
+# En el momento de realizar la práctica en un entorno local, se usó un nodo específico.
+[nfs]
+master.azure ansible_host=20.126.2.86 internal_ip=10.0.1.10 
+
+# En este apartado, definimos un grupo que contiene varios grupos,
+# en los ficheros, haremos referencia a ellos usando la siguiente sintaxis,
+# 'groups['cluster']'
 [cluster:children]
 master
 workers

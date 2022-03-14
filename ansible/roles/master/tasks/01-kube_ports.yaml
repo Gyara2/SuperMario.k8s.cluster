@@ -1,4 +1,5 @@
 ---
+  # Open the different kubernetes ports to enable services access.
   # https://docs.ansible.com/ansible/latest/collections/ansible/posix/firewalld_module.html
 - name: Open required kubernetes ports
   become: yes
@@ -20,6 +21,7 @@
   loop_control:
     label: "{{ item['invocation']['module_args'].port }}"
 
+  # Reload firewall as always, to apply configuration.
 - name: Reload firewall service
   become: yes
   service:

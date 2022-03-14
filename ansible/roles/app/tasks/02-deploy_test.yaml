@@ -1,0 +1,38 @@
+---
+
+  # Wait until container are deployed to test it
+  # https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html
+- name: Check if pods are already
+  become: yes
+  register: output
+  shell: sudo kubectl get pods -A
+  until: output.stdout.find("ContainerCreating") == -1
+  retries: 12
+  delay: 10
+  
+  # Extract HAproxy NodePort, later will be need this value to enable access in Terraform file
+  # as security_rule in 'security.tf'
+- name: Extract HAproxy NodePort
+  become: yes
+  register: port
+  shell: kubectl describe service --all-namespaces | grep -i nodeport | grep http | head -1 | sed 's/[^0-9]//g'
+
+- name: Check port
+  debug:
+    msg: "{{ port.stdout }}"
+
+  # Shows request will be test
+- name: Curl command
+  debug:
+    msg: "curl -I -H 'Host: {{ ingress_host }}' 'http://{{ internal_ip }}:{{ port.stdout }}'"
+
+
+  # To finalize this deployment, test communication
+- name: Test deploy using 
+  become: yes
+  register: result
+  shell: "curl -I -H 'Host: {{ ingress_host }}' 'http://{{ internal_ip }}:{{ port.stdout }}'"
+
+- name: Test deploy
+  debug:
+    msg: "{{ result.stdout_lines }}"

@@ -1,14 +1,18 @@
 ---
 
+  # Given that we use master node as nfs too, this task will be
+  # launch only to workers group.
+  # In this task, specify with which hosts the NFS share will be shared.
 - name: Update the /etc/exports file with node name
   become: yes
   register: exportline
   lineinfile:
     path: /etc/exports
-    line: "/srv/nfs       {{ hostvars[item]['internal_ip'] }}(rw,sync)"
+    line: "{{ nfs_dir }}      {{ hostvars[item]['internal_ip'] }}(rw,sync)"
   with_items:
-    - "{{ groups['cluster'] }}"
+    - "{{ groups['workers'] }}" ## - "{{ groups['cluster'] }}" If we have nfs node
 
+  # This is only to pretty exports file
 - name: Add header for export registry
   become: yes
   changed_when: exportline == 1
@@ -17,8 +21,9 @@
     insertbefore: "^(/srv/nfs)\\s*({{ hostvars[item]['internal_ip'] }})"
     line: "#{{ item }}"
   with_items:
-    - "{{ groups['cluster'] }}"
+    - "{{ groups['workers'] }}" ## - "{{ groups['cluster'] }}" If we have nfs node
 
+  # Finally, export all dirs to confirm and apply the configuration.
 - name: Reexport all directories, sync and apply new conf
   become: yes
   shell: exportfs -r

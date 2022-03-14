@@ -1,5 +1,10 @@
 ---
-# https://www.middlewareinventory.com/blog/ansible-lineinfile-examples/
+
+  # Why disable SELINUX?, It seems that the developers have not yet 
+  # taken into account this security section...
+  # We could configure properly, here is a guide.
+  # https://github.com/kubernetes/website/issues/14457
+  # https://www.middlewareinventory.com/blog/ansible-lineinfile-examples/
 - name: "Disable selinux for {{ groups['cluster'] }}"
   become: yes
   become_user: root
@@ -9,10 +14,11 @@
     # Search 'enforcing' ( SELINUX=enforcing )
     regexp: "SELINUX=enforcing"
     # And its disabled ( SELINUX=disabled )
-    ## This is necessary to run Kubernetes in our systems
+    ## This is necessary to run kubernetes in our systems
     line: "SELINUX=disabled"
     backup: yes
 
+  # Check file
 - name: Check SELINUX config file
   become: yes 
   register: output

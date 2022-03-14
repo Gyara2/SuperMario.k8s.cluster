@@ -1,6 +1,6 @@
 # Creación de red
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network
-
+## Creamos la red principal para nuestras máquinas.
 resource "azurerm_virtual_network" "myNet" {
     name                = "kubernetesnet"
     address_space       = ["10.0.0.0/16"]
@@ -14,7 +14,7 @@ resource "azurerm_virtual_network" "myNet" {
 
 # Creación de subnet
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet
-
+## Creamos una subred en la que se alojarán las máquinas.
 resource "azurerm_subnet" "mySubnet" {
     name                   = "terraformsubnet"
     resource_group_name    = azurerm_resource_group.rg.name
@@ -25,7 +25,7 @@ resource "azurerm_subnet" "mySubnet" {
 
 # Create NIC
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface
-
+## Creamos un adaptador de red para cada vm y les asignamos una dirección IP estática.
 resource "azurerm_network_interface" "myNic" {
   name                = "nic-${var.vms[count.index]}" 
   count               = length(var.vms) 
@@ -48,7 +48,7 @@ resource "azurerm_network_interface" "myNic" {
 
 # IP pública
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip
-
+## Creamos una IP Pública para cada máquina.
 resource "azurerm_public_ip" "myPublicIp" {
   name                = "vmip${var.vms[count.index]}"
   count               = length(var.vms)

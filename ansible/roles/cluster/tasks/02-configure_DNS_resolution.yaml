@@ -1,19 +1,21 @@
 ---
 
+  # Add hosts entries, thanks to this we can refer to the rest of the nodes by their hostname.
 - name: Configure DNS resolution in /etc/hosts file
   become: yes
   register: result
-  # set_fact:
-  #   # https://stackoverflow.com/questions/39545195/match-literals-with-regex-replace-ansible-filter
-  #   # vm: "{{ inventory_hostname.split('.')[0] }}"
-  #   node_name: "{{ item | regex_replace('^([^.]*).*', '\\1') }}"
-
   lineinfile:
     path: /etc/hosts
     line: "{{ hostvars[item]['internal_ip'] }} {{ item | regex_replace('^([^.]*).*', '\\1') }} {{ item }}"
   with_items:
-    - "{{ groups['cluster'] }}"
+    - "{{ groups['cluster'] }}" # - "{{ groups['nodes'] }}" If we have a separated nfs node where
+                                                          # nodes = ['master', 'worker01', 'worker02', 'nfs']
 
+  ## Alternative mode:                                                          
+  # set_fact:
+  #   # https://stackoverflow.com/questions/39545195/match-literals-with-regex-replace-ansible-filter
+  #   # vm: "{{ inventory_hostname.split('.')[0] }}"
+  #   node_name: "{{ item | regex_replace('^([^.]*).*', '\\1') }}"
 
 - name: Check /etc/hosts entries
   debug:
@@ -26,6 +28,7 @@
   loop_control:
     label: "{{ item.item }}"
 
+  # Show /etc/hosts file to check entries
 - name: Retrieve /etc/hosts file
   become: yes
   register: f_output

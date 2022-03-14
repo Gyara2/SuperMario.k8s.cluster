@@ -1,5 +1,6 @@
 ---
 
+  # https://stackoverflow.com/questions/61402334/allowzonedrifting-firewalld-what-is-it-and-should-i-disable-it#:~:text=Older%20versions%20of%20firewalld%20had,if%20you%20desire%20such%20behavior.
 - name: Disable 'AllowZoneDrifting' if it is enabled
   become: yes
   register: output

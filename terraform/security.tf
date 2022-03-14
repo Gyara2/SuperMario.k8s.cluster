@@ -1,6 +1,6 @@
 # Security group
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group
-
+## Definimos el grupo de seguridad de las máquinas en el que se especificarán las reglas necesarias para acceder a los servicios.
 resource "azurerm_network_security_group" "mySecGroup" {
     name                = "sshtraffic"
     location            = azurerm_resource_group.rg.location
@@ -18,17 +18,17 @@ resource "azurerm_network_security_group" "mySecGroup" {
         destination_address_prefix = "*"
     }
 
-    security_rule {
-        name                       = "HTTP"
-        priority                   = 1002
-        direction                  = "Inbound"
-        access                     = "Allow"
-        protocol                   = "Tcp"
-        source_port_range          = "*"
-        destination_port_range     = "31818"
-        source_address_prefix      = "*" #"XX.XXX.XX.XXX" # Your current Public IP
-        destination_address_prefix = "*"
-    }
+     # security_rule {
+    #     name                       = "HTTP"
+    #     priority                   = 1002
+    #     direction                  = "Inbound"
+    #     access                     = "Allow"
+    #     protocol                   = "Tcp"
+    #     source_port_range          = "*"
+    #     destination_port_range     = "" # Here you should specify your haproxy redirect port
+    #     source_address_prefix      = "*" #"XX.XXX.XX.XXX" # Your current Public IP to private access
+    #     destination_address_prefix = "*"
+    # }
 
     tags = {
         environment = "CP2"

@@ -1,5 +1,6 @@
 ---
 
+  # Create a dir tree that will be share.
 - name: Creates a directory to be exported by NFS
   file:
     path: "{{ nfs_dir }}"

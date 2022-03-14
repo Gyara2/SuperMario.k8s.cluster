@@ -3,21 +3,21 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: supermario-ingress
-  namespace: supermario-game
+  name: {{ ingress_name }}
+  namespace: {{ namespace_name }}
   labels:
-    app: supermario-game
+    app: {{ app_name }}
 #  annotations:
 #      haproxy.org/path-rewrite: "/"
 spec:
   rules:
-  - host: supermario.k8s2
+  - host: {{ ingress_host }}
     http:
       paths:
       - path: /
         pathType: "Prefix"
         backend:
           service:
-            name: supermario-service
+            name: {{ service_name }}
             port:
-              number: 80
+              number: {{ service_port }}

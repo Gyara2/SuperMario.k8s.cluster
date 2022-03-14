@@ -1,5 +1,7 @@
 ---
 
+  # Calico will be used together with flannel to apply security policies to the network of pods.
+  # https://projectcalico.docs.tigera.io/about/about-calico#:~:text=Calico%20is%20an%20open%20source,OpenStack%2C%20and%20bare%20metal%20services.
 - name: Apply calico conf
   become: yes
   register: output
@@ -8,12 +10,3 @@
 - name: Check output
   debug: 
     msg: "{{ output.stdout_lines }}"
-
- # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/reboot_module.html#examples
-- name: Reboot to apply conf
-  become: yes 
-  run_once: true
-  reboot: 
-  delegate_to: "{{ item }}"
-  with_items:
-    - "groups['cluster']"

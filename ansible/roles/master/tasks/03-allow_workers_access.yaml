@@ -1,4 +1,8 @@
 ---
+
+  # Now, should enable workers access to master node.
+  # This is controversial because we should not enable all inbound traffic since it is a security flaw, 
+  # but as a practical case we omit this additional configuration.
   # https://firewalld.org/documentation/man-pages/firewalld.richlanguage.html
   ## Example 6
 - name: Allow workers access
@@ -27,9 +31,9 @@
   loop_control:
     label: "{{ item['item'] }}"
 
-
-
-# https://github.com/kubernetes/kubernetes/issues/66108
+  # Finally, we set up our pod network where all nodes in the cluster will be in communication with each other.
 - name: Init Kube and create config.yaml file {{ inventory_hostname }}
   become: yes
   shell: kubeadm init --pod-network-cidr {{ pods_net }}
+  ignore_errors: true
+  no_log: true
