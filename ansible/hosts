@@ -3,7 +3,7 @@
 
 # Aquí definiremos aquellas variables comunes a todos los nodos
 [all:vars]
-ansible_user=adminUsername
+ansible_user=<YOUR ANSIBLE USER>
 
 [master]
 master.azure ansible_host=20.126.2.86 internal_ip=10.0.1.10
